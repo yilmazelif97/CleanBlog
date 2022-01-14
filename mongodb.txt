@@ -1,0 +1,23 @@
+
+burda tablo yerine collectionlar vardır. döküman tabanlıdır. 
+verileri json formatına benzer şekilde binary json olarak tutuluyor. (BSON)
+
+field-value ikilililerinde veriler tutuluyor. 
+
+Javascriot dökümanlar BSON larla kolay şekilde çalışabilir. 
+
+veriler arttıkças depolamayı kolayca arttırırsın daha da artarsa farklı serverlarda dahi tutabilirsin.
+ 
+ilişkisel DB lerde id lerle entityler arasındaki ilişki gösteilirken NOSQLde verinin içinde başka alan carmış gibi diğer değer gösteriliyor
+
+{
+    table1veri,
+    table1veri2,
+
+    table2:[{
+        table2veri,
+    }]
+
+}
+
+yani burda table1veri table2veri ile ilişkili
