@@ -78,7 +78,7 @@ app.post('/postact', async (req, res) => {
 app.get('/posts/:id', async (req, res) => {
   const post = await posts.findById(req.params.id);
   res.render('post.ejs', {
-    post,
+    post
   });
 });
 
