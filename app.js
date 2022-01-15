@@ -1,19 +1,17 @@
 const express = require('express');
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 const path = require('path');
 const ejs = require('ejs');
-const exp = require('constants');
-const res = require('express/lib/response');
 
-const posts = require('./models/Post')
+const posts = require('./models/Post');
 
 const app = express();
 
 //connection with DB
 
-mongoose.connect('mongodb://localhost/cleanblog-test-db',{
-    useNewUrlParser:true,
-    useUnifiedTopology:true,
+mongoose.connect('mongodb://localhost/cleanblog-test-db', {
+   useNewUrlParser:true,
+   useUnifiedTopology:true,
 });
 
 //Template Engine
@@ -41,17 +39,23 @@ app.use(express.static('public'));
 
 //req-res döngüsü içerisinde alınan req in sonlandırılmasını sağlar.
 
+//BU MWLERİ KULLANINCA SERVER AYAĞA KALKMIYOR??
+
 app.use(express.urlencoded({ extended: true })); //urldkei datayı okumanı sağlar
-app.use(express.json); //urldeki datayı json formatına döndürür
+app.use(express.json()); //urldeki datayı json formatına döndürür
 
 //ROUTE
 //bu da bir mw.
-app.get('/', (req, res) => {
-  /*const blog={id:1,title:"Blog title",description:"Blog description"}*/
+app.get('/', async (req, res) => {
+
+  const ipost = await posts.find({});
+
+  res.render('index.ejs',{
+    ipost
+  });
+
 
   // res.sendFile(path.resolve(__dirname, 'temp/index.html'));  //dosyadaki index sayfasının çalışmasını sağlar
-
-  res.render('index.ejs');
 
   // res.send(blog) //burdaki res.send middleware in atmamlandığını belirtiyor. eğer sen bunu silip ilk mw yi çalıştırırsan sıra buna geldiğinde cycle tıkanmış olur
 });
@@ -66,14 +70,12 @@ app.get('/add_post', (req, res) => {
 
 // req.body --> forma girilen verileri taşır
 //app_post taki formun metodu post yani veri gönderme. bunun için bir action çalıştırması gerekiyor. aciton:"/posts" şeklinde, o posts bu posts. yani o dorm teitklendiğinde gelip bu app.post taki logici çalıştırıyor
+
 app.post('/postact', async (req, res) => {
-  
-   await posts.create(req.body) // bu create olana kadar bekletir await ile. async
-    
-    res.redirect('/');
+  await posts.create(req.body); // bu create olana kadar bekletir await ile. async
+
+  res.redirect('/');
 });
-
-
 
 const port = 3000;
 
