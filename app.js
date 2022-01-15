@@ -10,8 +10,8 @@ const app = express();
 //connection with DB
 
 mongoose.connect('mongodb://localhost/cleanblog-test-db', {
-   useNewUrlParser:true,
-   useUnifiedTopology:true,
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
 });
 
 //Template Engine
@@ -47,13 +47,11 @@ app.use(express.json()); //urldeki datayı json formatına döndürür
 //ROUTE
 //bu da bir mw.
 app.get('/', async (req, res) => {
-
   const ipost = await posts.find({});
 
-  res.render('index.ejs',{
-    ipost
+  res.render('index.ejs', {
+    ipost,
   });
-
 
   // res.sendFile(path.resolve(__dirname, 'temp/index.html'));  //dosyadaki index sayfasının çalışmasını sağlar
 
@@ -75,6 +73,13 @@ app.post('/postact', async (req, res) => {
   await posts.create(req.body); // bu create olana kadar bekletir await ile. async
 
   res.redirect('/');
+});
+
+app.get('/posts/:id', async (req, res) => {
+  const post = await posts.findById(req.params.id);
+  res.render('post.ejs', {
+    post,
+  });
 });
 
 const port = 3000;
