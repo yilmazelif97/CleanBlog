@@ -14,6 +14,9 @@ app.use(methodOverride('_method',{
   methods:['POST','GET']
 }));
 
+const postController = require('./controllers/postController')
+
+const pageController = require('./controllers/pageController')
 
 //connection with DB
 
@@ -55,73 +58,30 @@ app.use(express.json()); //urldeki datayı json formatına döndürür
 
 //ROUTE
 //bu da bir mw.
-app.get('/', async (req, res) => {
-  const ipost = await posts.find({});
+//tüm postları index e yollar
+app.get('/', postController.getAllPosts  );
 
-  res.render('index.ejs', {
-    ipost,
-  });
+app.get('/about', pageController.aboutPage );
 
-  // res.sendFile(path.resolve(__dirname, 'temp/index.html'));  //dosyadaki index sayfasının çalışmasını sağlar
-
-  // res.send(blog) //burdaki res.send middleware in atmamlandığını belirtiyor. eğer sen bunu silip ilk mw yi çalıştırırsan sıra buna geldiğinde cycle tıkanmış olur
-});
-
-app.get('/about', (req, res) => {
-  res.render('about.ejs');
-});
-
-app.get('/add_post', (req, res) => {
-  res.render('add_post.ejs');
-});
+app.get('/add_post', pageController.addpostPage);
 
 // req.body --> forma girilen verileri taşır
-//app_post taki formun metodu post yani veri gönderme. bunun için bir action çalıştırması gerekiyor. aciton:"/posts" şeklinde, o posts bu posts. yani o dorm teitklendiğinde gelip bu app.post taki logici çalıştırıyor
+//app_post taki formun metodu post yani veri gönderme. bunun için bir action çalıştırması gerekiyor. aciton:"/posts" şeklinde, o posts bu posts. yani o form tetiklendiğinde gelip bu app.post taki logici çalıştırıyor
 
 //create post
-app.post('/postact', async (req, res) => {
-  await posts.create(req.body); // bu create olana kadar bekletir await ile. async
-
-  res.redirect('/');
-});
+app.post('/postact', postController.addPost);
 
 //load selected post
-app.get('/posts/:id', async (req, res) => {
-  const post = await posts.findById(req.params.id);
-  res.render('post.ejs', {
-    post
-  });
-});
+app.get('/posts/:id', postController.getOnePost );
+
+//edit posta yönlendirme o yüzdenf arklı controllerda
+app.get('/posts/edit/:id', pageController.editPage )
 
 //edit post
-app.get('/posts/edit/:id', async (req,res)=>{
-  const post = await posts.findOne({ _id: req.params.id
-})
-  res.render('edit.ejs',{
-    post
-  })
-})
-
-app.put('/posts/:id', async (req,res)=>{
-
-  const post = await posts.findOne({ _id:req.params.id
-  });
-  post.title = req.body.title
-  post.description = req.body.description
-
-  post.save();
-
-  res.redirect(`/posts/${req.params.id}`)
-
-});
+app.put('/posts/:id', postController.updatePost);
 
 //delete post
-app.delete('/posts/:id', async (req,res)=>{
-   await posts.findByIdAndRemove( req.params.id)
-
-   res.redirect('/')
-  
-})
+app.delete('/posts/:id', postController.deletePost)
 
 
 const port = 3000;
