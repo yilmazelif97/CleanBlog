@@ -41,6 +41,15 @@
             <a href="#">Start Bootstrap</a>
             <%= ipost[i].dateCreated %> </p>
         </div>
+
+        <div class="clearfix">
+          <a class="btn btn-primary float-right" href="/posts/edit/<%= ipost[i]._id %>">Update Post &rarr;</a>
+
+          <a class="btn btn-primary float-left" href="/posts/<%= ipost[i]._id %>?_method=DELETE">Delete Post &rarr;</a>
+        </div>
+
+        
+
       <% } %>
         
         <hr>

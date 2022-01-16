@@ -1,17 +1,26 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const methodOverride = require('method-override')
 const path = require('path');
 const ejs = require('ejs');
 
+
 const posts = require('./models/Post');
+const res = require('express/lib/response');
 
 const app = express();
+
+app.use(methodOverride('_method',{
+  methods:['POST','GET']
+}));
+
 
 //connection with DB
 
 mongoose.connect('mongodb://localhost/cleanblog-test-db', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  //useFindAndModify:false
 });
 
 //Template Engine
@@ -69,18 +78,51 @@ app.get('/add_post', (req, res) => {
 // req.body --> forma girilen verileri taşır
 //app_post taki formun metodu post yani veri gönderme. bunun için bir action çalıştırması gerekiyor. aciton:"/posts" şeklinde, o posts bu posts. yani o dorm teitklendiğinde gelip bu app.post taki logici çalıştırıyor
 
+//create post
 app.post('/postact', async (req, res) => {
   await posts.create(req.body); // bu create olana kadar bekletir await ile. async
 
   res.redirect('/');
 });
 
+//load selected post
 app.get('/posts/:id', async (req, res) => {
   const post = await posts.findById(req.params.id);
   res.render('post.ejs', {
     post
   });
 });
+
+//edit post
+app.get('/posts/edit/:id', async (req,res)=>{
+  const post = await posts.findOne({ _id: req.params.id
+})
+  res.render('edit.ejs',{
+    post
+  })
+})
+
+app.put('/posts/:id', async (req,res)=>{
+
+  const post = await posts.findOne({ _id:req.params.id
+  });
+  post.title = req.body.title
+  post.description = req.body.description
+
+  post.save();
+
+  res.redirect(`/posts/${req.params.id}`)
+
+});
+
+//delete post
+app.delete('/posts/:id', async (req,res)=>{
+   await posts.findByIdAndRemove( req.params.id)
+
+   res.redirect('/')
+  
+})
+
 
 const port = 3000;
 
@@ -89,3 +131,6 @@ app.listen(port, () => {
 });
 
 //template engine--> kullanılan statik dosyaların yanısıra dinamik dosyaları bunun içerisine gömebilrsin böyle tarayıcının okuyabileceği html olur
+
+
+//npm method-override --> put requesti post request gibi simule etmek için 
