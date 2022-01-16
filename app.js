@@ -20,7 +20,7 @@ const pageController = require('./controllers/pageController')
 
 //connection with DB
 
-mongoose.connect('mongodb://localhost/cleanblog-test-db', {
+mongoose.connect('mongodb+srv://elifyilmzaz:587785000aA@cluster0.b0mi6.mongodb.net/cleanblog-db?retryWrites=true&w=majority', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   //useFindAndModify:false
@@ -84,7 +84,7 @@ app.put('/posts/:id', postController.updatePost);
 app.delete('/posts/:id', postController.deletePost)
 
 
-const port = 3000;
+const port = process.env.port || 3000; //heroku istediği portu vercek buraya 
 
 app.listen(port, () => {
   console.log('bağlantı kuruldu');
