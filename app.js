@@ -84,7 +84,7 @@ app.put('/posts/:id', postController.updatePost);
 app.delete('/posts/:id', postController.deletePost)
 
 
-const port = process.env.port || 3000; //heroku istediği portu vercek buraya 
+const port = process.env.port || 5000; //heroku istediği portu vercek buraya 
 
 app.listen(port, () => {
   console.log('bağlantı kuruldu');
